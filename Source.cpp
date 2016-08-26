@@ -97,10 +97,12 @@ struct ProcState
 
 int main()
 {
-    constexpr size_t STAGES = 15;
+    constexpr size_t STAGES = 25;
     ProcState proc[STAGES + 1];
-    proc[0].reg1 = 0x09;
-    proc[0].reg2 = 0x0c;
+    proc[0].reg1 = 0xF0F1;
+    proc[0].reg2 = 0x0F0F;
+
+    constexpr auto x = 0xF0F1 + 0x0F0F - 0x10000;
 
     // Add reg1 to reg2
     // reg3 is P, reg4 is G
@@ -124,6 +126,22 @@ int main()
         // P = ...
         InputLines(OP_LSHIFTIMMONE, REG_3, REG_3, REG_1, 2),
 
+        InputLines(OP_AND, REG_3, REG_1, REG_3),
+        // G = ...
+        InputLines(OP_LSHIFTIMMZERO, REG_4, REG_4, REG_1, 4),
+        InputLines(OP_AND, REG_1, REG_3, REG_1),
+        InputLines(OP_OR, REG_1, REG_4, REG_4),
+
+        // P = ...
+        InputLines(OP_LSHIFTIMMONE, REG_3, REG_3, REG_1, 4),
+        InputLines(OP_AND, REG_3, REG_1, REG_3),
+        // G = ...
+        InputLines(OP_LSHIFTIMMZERO, REG_4, REG_4, REG_1, 8),
+        InputLines(OP_AND, REG_1, REG_3, REG_1),
+        InputLines(OP_OR, REG_1, REG_4, REG_4),
+
+        // P = ...
+        InputLines(OP_LSHIFTIMMONE, REG_3, REG_3, REG_1, 8),
         InputLines(OP_AND, REG_3, REG_1, REG_3),
         // C = G (nop)
         // S = P ^ Cprev
